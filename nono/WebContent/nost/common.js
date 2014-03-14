@@ -1,0 +1,19 @@
+//define module is like utils
+define(
+		function() {
+			return {
+				getContextPath:function() {
+					var pathname = window.location["pathname"];
+					var indexPages = pathname.indexOf("pages");
+					var returnPath;
+					if (indexPages == 1) {
+						returnPath = "";
+					} else {
+						returnPath = pathname.substring(0, indexPages);
+					}
+					console.log("get context path " + returnPath);
+					return returnPath;
+				}
+			};
+		}
+);
