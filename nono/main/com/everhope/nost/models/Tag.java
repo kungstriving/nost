@@ -7,17 +7,15 @@ package com.everhope.nost.models;
  */
 public class Tag {
 
-	private String userPart;
+	private String tenant;
 	private String ds;
 	private String tagName;
-	private String value;
-	private String quality;
 	
 	public String getUserPart() {
-		return userPart;
+		return tenant;
 	}
 	public void setUserPart(String userPart) {
-		this.userPart = userPart;
+		this.tenant = userPart;
 	}
 	public String getDs() {
 		return ds;
@@ -31,27 +29,14 @@ public class Tag {
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}
-	public String getValue() {
-		return value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
-	public String getQuality() {
-		return quality;
-	}
-	public void setQuality(String quality) {
-		this.quality = quality;
-	}
 	
-	public Tag(String userPart, String ds, String tagName, String value,
-			String quality) {
+	public Tag() {}
+	
+	public Tag(String userPart, String ds, String tagName) {
 		super();
-		this.userPart = userPart;
+		this.tenant = userPart;
 		this.ds = ds;
 		this.tagName = tagName;
-		this.value = value;
-		this.quality = quality;
 	}
 	
 	

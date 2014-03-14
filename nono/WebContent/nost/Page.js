@@ -1,15 +1,17 @@
 //define the Page module
 
 define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memory","dojo/store/Observable",
+        "dojo/query","dojo/dom-attr",
         "nost/common","nost/Tag"],
 	function(declare, request, array, Memory, Observable, 
+			query, domAttr,
 			common, Tag) {
 		return declare(null, {
 			
 			/****************** fields *****************************/
 			name:"",
 			tags:null,		//avoid reference error use null
-			cus:null,
+			cus:null,		//control units {field:exp}
 			
 			refreshRate:0,
 			refreshFlag:0,
@@ -19,33 +21,42 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 			/******************* methods *************************/
 			
 			init:function(){
-				
-				var contextPath = common.getContextPath();
-				var requestJsonPath = contextPath + "pages/" + this.name + "/index.json";
 				var thisPage = this;
-				//request for the server side json file
-				request.get(requestJsonPath,
-						{
-							handleAs:"json",
-							sync:true
-						}).then(
-						function(serverPage) {
-							console.log("server json = " + JSON.stringify(serverPage));
-							//refresh rate
-							thisPage.refreshRate = serverPage.refreshrate;
-							//tag arrays
-							var tagsArr = serverPage.tags;	//{tagname:"db0#ds0#tag1",refexp:[0]}
-							array.forEach(tagsArr, function(item, i) {
-								var tmpTag = new Tag(item.tagname, item.refexp);
-								thisPage.tags.push(tmpTag);
-							});
-							thisPage.exps = serverPage.expressions;
-							thisPage.elems = serverPage.elements;
-						},
-						function(error) {
-							console.log(error);
+				//resolve the page content
+				query(".binding-unit").forEach(function(node, index, nodelist) {
+					var cusContent = domAttr.get(node,"cus");
+					cus = JSON.parse(cusContent);
+					for(var field in cus) {
+						console.log("key " + field + " field " + cus[field]);
+						var cuExp = cus[field];
+						var compiled = Parser.parse(cuExp);
+						var arrTags = compiled.variables();
+						for(var i in arrTags) {
+							var tagName = arrTags[i];
+							if (tagName in thisPage.tags) {
+								//already in the list
+								thisPage.tags[tagName].refexps.push(cuExp);
+								continue;
+							}
+							
+							var tagObject = new Tag(tagName);
+							tagObject.refexps.push(cuExp);
+							tagObject.tagval = "";
+							
+							thisPage.tags[tagName] = tagObject;
+							console.log("ctags " + tagName);
 						}
-				);
+					}
+					console.log(cusContent);
+				});
+				
+				//register the page for server
+				var requestURL = common.getContextPath() + "nost";
+				var tagsReg = {"tags":[]};
+				for(var tag in this.tags) {
+					tagsReg.tags.push(tag);
+				}
+				console.log(JSON.stringify(tagsReg));
 			},
 			refreshPage:function() {
 				//ask the server for newest value
@@ -89,7 +100,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 			constructor:function(pName, pRate) {
 				this.name = pName;
 				this.refreshRate = pRate;
-				this.tags = [];
+				this.tags = {};
 				this.exps = [];
 				this.elems = [];
 				//declare.safeMixin(this,args);

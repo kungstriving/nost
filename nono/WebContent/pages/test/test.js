@@ -8,4 +8,10 @@ require(['dojo/dom','dojo/_base/config','dojo/query','dojo/dom-attr',
 			var binding = JSON.parse(domAttr.get(node, "binding"));
 			console.log(JSON.stringify(binding));
 		});
+		
+		for (var x in [0,1,2,3,4]) {
+			console.log(x);
+		}
+		
+		alert(window.x);
 });

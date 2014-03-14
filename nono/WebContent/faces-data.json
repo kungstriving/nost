@@ -1,0 +1,23 @@
+1)showpage
+request=http://host:port/webappname/bpd?action=showpage&pagename=page1
+
+2)initpage
+
+3)register
+request=http://host:port/webappname/bpd?action=register&pagename=page1&tags=$PARAMTAGS$
+$PARAMTAGS$={
+	tags:[ds1_tag1,ds2_tag1,ds1_tag2,ds2_tag2]
+}
+response=ok
+
+4)refresh
+request=http://host:port/webappname/bpd?action=updatepage&pagename=page1&updateflag=10
+response={
+	tags:[
+		{name:ds1_tag1,value:100,timestamp:30,quality:good},
+		{name:ds1_tag2,value:200,timestamp:40,quality:bad},
+		{name:ds2_tag1,value:300,timestamp:50,quality:good},
+		...
+	],
+	updateflag:20
+}

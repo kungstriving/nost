@@ -21,14 +21,19 @@ public class FaceConstants {
 	 ************************************************************/
 	
 	/**
-	 * request url data key for action
+	 * request url data key for action : action
 	 */
 	public static final String REQ_K_ACTIONS = "action";
 	
 	/**
-	 * page name key
+	 * page name key : pageName
 	 */
 	public static final String REQ_K_PAGENAME = "pageName";
+	
+	/**
+	 * tags key in url : tags
+	 */
+	public static final String REQ_K_TAGS = "tags";
 	
 	/**
 	 * page refresh time flag
@@ -48,5 +53,14 @@ public class FaceConstants {
 	 * request action type-refresh
 	 */
 	public static final String REQ_ACTION_REFRESH = "refresh";
+	
+	/*****************************************************************
+	 * others
+	 ****************************************************************/
+	
+	/**
+	 * front seperator  _
+	 */
+	public static final String FACE_SEPERATOR = "_";
 	
 }

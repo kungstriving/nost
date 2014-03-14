@@ -5,11 +5,12 @@ define(
 		function(declare) {
 			return declare(null, {
 				tagname:"",
-				refexp:null,		//[0,1,2]
+				refexps:null,		//[0,1,2]
+				tagval:"",
 				
-				constructor:function(pTagName, pRefExpArr) {
+				constructor:function(pTagName) {
 					this.tagname = pTagName;
-					this.refexp = pRefExpArr;
+					this.refexps = [];
 				}
 			});
 		}
