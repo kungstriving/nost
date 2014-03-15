@@ -26,7 +26,6 @@ public class DebugServlet extends HttpServlet {
      */
     public DebugServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -39,7 +38,7 @@ public class DebugServlet extends HttpServlet {
 		
 		String resultContent = "";
 		
-		String type = request.getParameter("at");
+		String type = request.getParameter("at");			//access type
 		switch (type) {
 		case "pages":
 			Map<String, Page> mapPages = (Map<String, Page>)

@@ -2,16 +2,21 @@ package com.everhope.nost.face;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.everhope.nost.models.Page;
+import com.everhope.nost.models.SessionPage;
 import com.everhope.nost.models.Tag;
 import com.google.gson.Gson;
 
@@ -46,6 +51,7 @@ public class RegisterPageServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		logger.info(String.format("register page @ %s", request.getSession().getId()));
@@ -61,11 +67,36 @@ public class RegisterPageServlet extends HttpServlet {
 		List<Tag> regTags = resolveTags(tagsJson);
 		
 		//check if the system already load this page
-//		PageContainer<Page> container = 
-//				(PageContainer<Page>)getServletContext().getAttribute(FaceConstants.CTX_K_PAGES);
-//		Page page = container.getByName(pageName);
+		Map<String, Page> container = (Map<String, Page>)getServletContext().getAttribute(FaceConstants.CTX_K_PAGES);
+		Page page = container.get(pageName);
+		if (page == null) {
+			page = new Page();
+			page.setPageName(pageName);
+		}
+		//更新当前画面所有tag点
+		page.setTags(regTags);
+		
+		HttpSession session = request.getSession();
+		Map<String, SessionPage> seContainer = (Map<String, SessionPage>)session.getAttribute(FaceConstants.SEN_K_PAGES);
+		//判断session中是否包含该page
+		if (seContainer == null) {
+			//当前sessionContainer为空
+			seContainer = new HashMap<String, SessionPage>();
+			//添加sessionContainter到session对象中
+			session.setAttribute(FaceConstants.SEN_K_PAGES, seContainer);
+		}
+		
+		SessionPage sessionPage = seContainer.get(pageName);
+		
+		if (sessionPage == null) {
+			//如果当前session无该页面对象 新建page并加入
+			//用已有的context page 构建sessionpage对象
+			SessionPage regPage = new SessionPage(container.get(pageName));
+			seContainer.put(pageName, regPage);
+		}
 		
 		logger.info("register done");
+		response.getWriter().write("{\"status\":0,\"msg\":\"ok\"}");
 	}
 	
 	private List<Tag> resolveTags(String tagsJson) {

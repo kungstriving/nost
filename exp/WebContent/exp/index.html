@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ExpressionBuilder</title>
+<link rel="stylesheet" href="../css/base/jquery-ui.css" />
+<link rel="stylesheet" href="../css/layout-default.css" />
+<script type="text/javascript" src="../js/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.10.4.js"></script>
+<script type="text/javascript" src="../js/jquery.layout.js"></script>
+<script type="text/javascript" src="../js/parser.js"></script>
+<script type="text/javascript" src="expbuilder.js"></script>
+<style type="text/css">
+html,body {
+	background: #666666;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+}
+
+#container {
+	background: #999;
+	min-height: 300px;
+	min-width: 600px;
+	position: absolute;
+	top: 50px; /* margins in pixels */
+	bottom: 50px; /* could also use a percent */
+	left: 50px;
+	right: 50px;
+}
+
+#exp {
+	font-size: 3em;
+	font-weight: bold;
+}
+
+.outer_no_padding{
+	padding: 0px;
+}
+
+.inner_no_margin{
+	margin: 0px;
+	padding: 0px;
+}
+
+</style>
+</head>
+<body>
+	<div id="container" class="ui-layout-container">
+		<div id="showpane" class="ui-layout-center ui-layout-container outer_no_padding">
+			<div id="barpane" class="ui-layout-center ui-layout-container outer_no_padding">
+				<div id="editpane" class="ui-layout-center ui-layout-container outer_no_padding">
+						<div class="ui-layout-center ui-widget-content outer_no_padding">
+							<textarea id="exp" style="width:98%;height:95%;" spellcheck="false"></textarea>
+						</div>
+						<div id="buttonpane" class="ui-layout-south ui-layout-container outer_no_padding">
+							<div class="ui-layout-center"><p id="results">result goes here</p></div>
+							<div class="ui-layout-east outer_no_padding"><button id="gobtn" class="opbuttons" style="width:99%;height:100%;">GO!</button></div>
+						</div>
+				</div>
+				<div class="ui-layout-south outer_no_padding">
+					<button id="addbtn" class="opbuttons" style="height:45px;width:50px;">+</button>
+					<button id="plusbtn" class="opbuttons" style="height:45px;width:50px;">-</button>
+					<button id="mulbtn" class="opbuttons" style="height:45px;width:50px;">*</button>
+					<button id="divbtn" class="opbuttons" style="height:45px;width:50px;">/</button>
+				</div>
+			</div>
+			<div class="ui-layout-south ui-layout-pane ui-layout-pane-south">
+				<input id="vars" type="text" style="width:100%;height:100%;" spellcheck="false"></input>
+			</div>
+		</div>
+		<div class="ui-layout-north" style="padding:0;">
+			<h1 class="ui-widget-header" style="margin:0;padding:0;">IBP-Expressions</h1>
+		</div>
+		<div id="tagsbar" class="ui-layout-west outer_no_padding">
+			<h3>TagsSelect</h3>
+			<div>
+				<p class="drag">ds1_Tag1</p>
+				<p class="drag">ds1_Tag2</p>
+			</div>
+			<h3>Target</h3>
+			<div>
+				Drop here
+			</div>
+			<h3>FuncSelect</h3>
+			<div>
+				funs goes here
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -16,6 +16,11 @@ public class FaceConstants {
 	 */
 	public static final String CTX_K_PAGES = "pages";
 	
+	/**
+	 * session中的page容器key定义 sepages
+	 */
+	public static final String SEN_K_PAGES = "sepages";
+	
 	/************************************************************
 	 * request url keys definition
 	 ************************************************************/

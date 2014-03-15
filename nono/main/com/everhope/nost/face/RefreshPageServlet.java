@@ -11,14 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.everhope.nost.models.Page;
+import com.everhope.nost.models.SessionPage;
 
 /**
  * Servlet implementation class RefreshPageServlet
  */
 @WebServlet("/refresh")
 public class RefreshPageServlet extends HttpServlet {
-       
     /**
 	 * 
 	 */
@@ -42,7 +41,7 @@ public class RefreshPageServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -51,18 +50,14 @@ public class RefreshPageServlet extends HttpServlet {
 		String pageName = request.getParameter(FaceConstants.REQ_K_PAGENAME);
 		String refreshFlag = request.getParameter(FaceConstants.REQ_K_REFFLAG);
 		
-		Map<String, Page> pageMap = (Map<String,Page>)
-				request.getServletContext().getAttribute(FaceConstants.CTX_K_PAGES);
-		Page page = pageMap.get(pageName);
-		page.setRefreshFlag(Integer.parseInt(refreshFlag));
+		Map<String, SessionPage> pageMap = (Map<String,SessionPage>)
+				request.getSession().getAttribute(FaceConstants.CTX_K_PAGES);
+		SessionPage page = pageMap.get(pageName);
+		page.setUpdateFlag(Integer.parseInt(refreshFlag));
 		
-		String refreshData = page.refresh();
-		if (logger.isDebugEnabled()) {
-			logger.debug("refreshing data \r\n" + refreshData);
-		}
-		response.getWriter().write(refreshData);
-		
+		String refreshData = page.update();
 		logger.info("refresh page done");
+		response.getWriter().write(refreshData);
 	}
 
 }

@@ -14,7 +14,7 @@ public class Page {
 
 	private String pageName;
 	private List<Tag> tags;
-	private int refreshFlag = 0;
+//	private int refreshFlag = 0;
 	
 	public Page() {}
 	
@@ -23,13 +23,6 @@ public class Page {
 		this.tags = pTags;
 	}
 
-	public int getRefreshFlag() {
-		return refreshFlag;
-	}
-
-	public void setRefreshFlag(int refreshFlag) {
-		this.refreshFlag = refreshFlag;
-	}
 
 	public String getPageName() {
 		return pageName;
