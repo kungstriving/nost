@@ -11,13 +11,17 @@ $PARAMTAGS$={
 response=ok
 
 4)refresh
-request=http://host:port/webappname/bpd?action=updatepage&pagename=page1&updateflag=10
+request=http://host:port/webappname/nost?action=refresh&pagename=page1&updateflag=10
 response={
 	tags:[
-		{name:ds1_tag1,value:100,timestamp:30,quality:good},
-		{name:ds1_tag2,value:200,timestamp:40,quality:bad},
-		{name:ds2_tag1,value:300,timestamp:50,quality:good},
+		{name:ds1_tag1,value:100},
+		{name:ds1_tag2,value:200},
+		{name:ds2_tag1,value:300},
 		...
 	],
 	updateflag:20
 }
+
+5)Debug
+request=http://host:port/webappname/Debug?at=pages
+response= [context pages]

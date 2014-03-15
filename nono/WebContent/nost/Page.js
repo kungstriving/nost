@@ -9,6 +9,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 		return declare(null, {
 			
 			/****************** fields *****************************/
+			tenantID:"",
 			name:"",
 			tags:null,		//avoid reference error use null
 			cus:null,		//control units {field:exp}
@@ -54,9 +55,25 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				var requestURL = common.getContextPath() + "nost";
 				var tagsReg = {"tags":[]};
 				for(var tag in this.tags) {
-					tagsReg.tags.push(tag);
+					tagsReg.tags.push(this.tenantID + common.NAME_SEP + tag);
 				}
-				console.log(JSON.stringify(tagsReg));
+				var tagsRegJson = JSON.stringify(tagsReg);
+				console.log(tagsRegJson);
+				request.post(requestURL, {
+					data:{
+						"action":"register",
+						"pageName":thisPage.name,
+						"tags":tagsRegJson
+					},
+					handleAs:"json"
+				}).then(
+						function(response) {
+							console.log(response);
+						},
+						function(error) {
+							console.log(error);
+						}
+				);
 			},
 			refreshPage:function() {
 				//ask the server for newest value
@@ -81,7 +98,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				);
 				
 				//resolve the data respond
-				//refresh the elements and scripts
+				//refresh the elements
 			},
 			start:function() {
 				console.log("start refreshing ");
@@ -97,9 +114,10 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 			toString:function() {
 				return JSON.stringify(this);
 			},
-			constructor:function(pName, pRate) {
+			constructor:function(pName, pRate, pTenant) {
 				this.name = pName;
 				this.refreshRate = pRate;
+				this.tenantID = pTenant;
 				this.tags = {};
 				this.exps = [];
 				this.elems = [];

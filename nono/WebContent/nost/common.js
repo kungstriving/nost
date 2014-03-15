@@ -13,7 +13,8 @@ define(
 					}
 					console.log("get context path " + returnPath);
 					return returnPath;
-				}
+				},
+				NAME_SEP:"_"
 			};
 		}
 );
