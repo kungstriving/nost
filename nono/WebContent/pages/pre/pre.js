@@ -13,5 +13,5 @@ require(['dojo/dom',
 		var page = new Page(pageName, rate, tenant);
 		page.init();
 		console.log("after init page = " + page.toString());
-		//page.start();
+		page.start();
 });

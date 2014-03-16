@@ -51,7 +51,7 @@ public class RefreshPageServlet extends HttpServlet {
 		String refreshFlag = request.getParameter(FaceConstants.REQ_K_REFFLAG);
 		
 		Map<String, SessionPage> pageMap = (Map<String,SessionPage>)
-				request.getSession().getAttribute(FaceConstants.CTX_K_PAGES);
+				request.getSession().getAttribute(FaceConstants.SEN_K_PAGES);
 		SessionPage page = pageMap.get(pageName);
 		page.setUpdateFlag(Integer.parseInt(refreshFlag));
 		

@@ -24,6 +24,6 @@ public class SessionPage {
 	}
 	
 	public String update() {
-		return "";
+		return "{\"tags\":{\"ds1_tag1\":1,\"ds1_tag2\":2,\"ds2_tag3\":3},\"updateFlag\":20}";
 	}
 }
