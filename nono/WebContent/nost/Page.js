@@ -2,27 +2,28 @@
 
 define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memory","dojo/store/Observable",
         "dojo/query","dojo/dom-attr",
-        "nost/common","nost/Tag"],
+        "nost/common","nost/Tag", "nost/ContUnit", "nost/Expr"],
 	function(declare, request, array, Memory, Observable, 
 			query, domAttr,
-			common, Tag) {
-		return declare(null, {
+			common, Tag, ContUnit, Expr) {
+		var clsPage = declare(null, {
 			
 			/****************** fields *****************************/
-			tenantID:"",
-			name:"",
+			tenantID:"",	//tenant id
+			name:"",		//page name
 			tags:null,		//avoid reference error use null 
 					//"ds1_tag2":{"tagname":"ds1_tag2","refexps":["ds1_tag1+ds1_tag2","ds1_tag2*3"],"tagval":""},
 					//"ds2_tag3":{"tagname":"ds2_tag3","refexps":["ds2_tag3+ds1_tag1"],"tagval":""}},
-			cus:null,		//control units 
+			exps:null,		//expresstions for control units 
 					//"cus":{"ds1_tag1+ds1_tag2":[{"node":node,"field":field},{"node":node,"field":field}],
 					//		 "ds1_tag2*3":[{"node":node,"filed":field}],
 					//		 "ds2_tag3+ds1_tag1":[{"node":node,"field":field}]}
+			expStore:null,
+			refreshRate:0,	//update interval in MS
+			refreshFlag:0,	//update time flag
 			
-			refreshRate:0,
-			refreshFlag:0,
-			
-			intervalHandle:null,
+			intervalHandle:null,		// page interval handle
+			observeHandle:null,
 			
 			/******************* methods *************************/
 			
@@ -35,19 +36,25 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 					
 					for(var field in cusJson) {
 						console.log("field " + field + " expr " + cusJson[field]);
-						var cuExp = cusJson[field];
-						var cuObj = {};
-						cuObj["node"] = node;
-						cuObj["field"] = field;
+						var cuExp = cusJson[field];			//current expression
+						var compiled = Parser.parse(cuExp);
 						
-						if (cuExp in thisPage.cus) {
-							thisPage.cus[cuExp].push(cuObj);
+						/********* add the cus ***********************/
+						
+						var cuObj = new ContUnit(node, field);		//create new control unit
+						var exprObj = thisPage.expStore.get(cuExp);
+						if (exprObj == null || exprObj == undefined) {
+							var expObj = new Expr(cuExp);
+							expObj.comp = compiled;
+							expObj.cus.push(cuObj);
+							//thisPage.exps.push(expObj);
+							thisPage.expStore.put(expObj);
 						} else {
-							thisPage.cus[cuExp] = [];
-							thisPage.cus[cuExp].push(cuObj);
+							exprObj.cus.push(cuObj);
 						}
 						
-						var compiled = Parser.parse(cuExp);
+						/************* resolve the tags **********************/
+						
 						var arrTags = compiled.variables();
 						for(var i in arrTags) {
 							var tagName = arrTags[i];
@@ -62,7 +69,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 							tagObject.tagval = "";
 							
 							thisPage.tags[tagName] = tagObject;
-							console.log("ctags " + tagName);
+							console.log("resolve tag : " + tagName);
 						}
 					}
 					console.log(cusContent);
@@ -75,7 +82,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 					tagsReg.tags.push(this.tenantID + common.NAME_SEP + tag);
 				}
 				var tagsRegJson = JSON.stringify(tagsReg);
-				console.log(tagsRegJson);
+				console.log("register page : " + tagsRegJson);
 				request.post(requestURL, {
 					data:{
 						"action":"register",
@@ -92,11 +99,17 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 						}
 				);
 			},
+			
+			/**
+			 * refresh the page
+			 */
 			refreshPage:function() {
 				//ask the server for newest value
 				var thisPage = this;
 				var requestURL = common.getContextPath() + "nost";
+				
 				console.log("page " + thisPage.name + " flag " + thisPage.refreshFlag);
+				
 				request.post(requestURL, {
 					data:{
 						"action":"refresh",
@@ -107,15 +120,14 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				}).then(
 						function(response) {
 							//got the new values then update the store
-							console.log(response);		//{tags:{tag1:20,tag2:30,tag3:40},updateFlag:20}
+							console.log("refresh response : " + JSON.stringify(response));		//{tags:{tag1:20,tag2:30,tag3:40},updateFlag:20}
 							var needExpsArr = {};		//{exp1:1,exp2:1,exp3:1}
 							var tagArr = response.tags;	//updated tags array
 							//set the refresh flag
 							thisPage.refreshFlag = response.updateFlag;
 							var pageTags = thisPage.tags;		//cached tags object
-							var pageCUS = thisPage.cus;			//cached cus object
 							//iterate all the changed tags
-							console.log("lenght " + tagArr.length);
+							//console.log("length " + tagArr.length);
 							for(var k in tagArr) {
 								var tagValue = tagArr[k];
 								//set value first
@@ -131,26 +143,33 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 							for(var l in needExpsArr) {
 								var nowExp = l;
 								//compute the new value
-								var newValue = thisPage.computeExpValue(nowExp);
+								//get the Expr object
+								var exprObj = thisPage.expStore.get(nowExp);
+								
+								var newValue = thisPage.computeExpValue(nowExp, exprObj);
+								
+								exprObj.val = newValue;
+								thisPage.expStore.put(exprObj);
+								
 								//animate the elements
-								var aniArr = pageCUS[l];		//get the animate arrays
-								for(var m = 0; m < aniArr.length; m++) {
-									var aniObj = aniArr[m];		//{"node":node, "field":field}
-									//animateIT
-									var aniType = aniObj["field"];
-									if (aniType == "x") {
-										console.log("animate " + aniObj["node"].nodeName + " at " + aniType + " with " + newValue);
-										continue;
-									}
-									if (aniType == "y") {
-										console.log("animate " + aniObj["node"].nodeName + " at " + aniType);
-										continue;
-									}
-									if (aniType == "fill") {
-										console.log("animate " + aniObj["node"].nodeName + " at " + aniType);
-										continue;
-									}
-								}
+//								var aniArr = pageCUS[l];		//get the animate arrays
+//								for(var m = 0; m < aniArr.length; m++) {
+//									var aniObj = aniArr[m];		//{"node":node, "field":field}
+//									//animateIT
+//									var aniType = aniObj["field"];
+//									if (aniType == "x") {
+//										console.log("animate " + aniObj["node"].nodeName + " at " + aniType + " with " + newValue);
+//										continue;
+//									}
+//									if (aniType == "y") {
+//										console.log("animate " + aniObj["node"].nodeName + " at " + aniType);
+//										continue;
+//									}
+//									if (aniType == "fill") {
+//										console.log("animate " + aniObj["node"].nodeName + " at " + aniType);
+//										continue;
+//									}
+//								}
 							}
 						},
 						function(error) {
@@ -162,10 +181,11 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				//refresh the elements
 			},
 			
-			computeExpValue:function(expr) {
+			computeExpValue:function(expr, exprObj) {
 				console.log("compute the exp value");
 				console.log("expr = " + expr);
-				var compiled = Parser.parse(expr);
+				
+				var compiled = exprObj.comp;
 				var vars = compiled.variables();
 				var valueObject = {};
 				for(var i = 0; i < vars.length; i++) {
@@ -195,8 +215,22 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				this.refreshRate = pRate;
 				this.tenantID = pTenant;
 				this.tags = {};	//{tag1:{value,[exp1,exp2]}, tags:{value, exp3}}
-				this.cus = {};	//{exp1:x,exp2:y,exp3:width}
+				this.exps = [];	//[{exp:a+b,cus:[{node:n1,field:f},{node:n2,field:f2}],val:1},{},{}]
 				//declare.safeMixin(this,args);
+			    // create the initial Observable store
+			    this.expStore = new Observable(new Memory({data: this.exps, idProperty:"exp"}));
+			    
+			    // query the store
+			    var results = this.expStore.query({});
+
+			    // now listen for any changes
+			    this.observeHandle = results.observe(function(object, removedFrom, insertedInto){
+			    	//update change
+			    	console.log("observing");
+			    	console.log(object);
+			    }, true);
 			}
 		});
+		
+		return clsPage;
 });
