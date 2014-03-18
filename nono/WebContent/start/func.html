@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Funcs Test</title>
+</head>
+<body>
+<script type="text/javascript">
+	var foo = function() {
+		return {
+			funa:function(x) {
+				alert('funa' + x);
+			},
+			funb:function(x) {
+				alert('funb' + x);
+			}
+		};
+	}
+	
+	var test = new foo();
+	test["funa"]('kxy');
+	
+</script>
+</body>
+</html>

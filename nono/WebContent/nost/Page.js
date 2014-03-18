@@ -2,28 +2,41 @@
 
 define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memory","dojo/store/Observable",
         "dojo/query","dojo/dom-attr",
-        "nost/common","nost/Tag", "nost/ContUnit", "nost/Expr"],
+        "nost/common","nost/Tag", "nost/ContUnit", "nost/Expr", "nost/NostNode", "nost/NText"],
 	function(declare, request, array, Memory, Observable, 
 			query, domAttr,
-			common, Tag, ContUnit, Expr) {
+			common, Tag, ContUnit, Expr, NostNode, NText) {
 		var clsPage = declare(null, {
 			
 			/****************** fields *****************************/
 			tenantID:"",	//tenant id
 			name:"",		//page name
 			tags:null,		//avoid reference error use null 
-					//"ds1_tag2":{"tagname":"ds1_tag2","refexps":["ds1_tag1+ds1_tag2","ds1_tag2*3"],"tagval":""},
-					//"ds2_tag3":{"tagname":"ds2_tag3","refexps":["ds2_tag3+ds1_tag1"],"tagval":""}},
+					/**
+					 *{
+					 * "ds1_tag2":{"tagname":"ds1_tag2","refexps":["ds1_tag1+ds1_tag2","ds1_tag2*3"],"tagval":""},
+					 * "ds2_tag3":{"tagname":"ds2_tag3","refexps":["ds2_tag3+ds1_tag1"],"tagval":""}
+					 *}
+					 */
 			exps:null,		//expresstions for control units 
-					//"cus":{"ds1_tag1+ds1_tag2":[{"node":node,"field":field},{"node":node,"field":field}],
-					//		 "ds1_tag2*3":[{"node":node,"filed":field}],
-					//		 "ds2_tag3+ds1_tag1":[{"node":node,"field":field}]}
-			expStore:null,
+			/**
+			 * {[
+			 * 	{"exp":"ds1_tag1+ds1_tag2",
+			 * 		"cus":[{"node":node1,"field":field1},{"node":node2,"field":"field2"}],
+			 * 		"val":100,
+			 * 		"comp":compiled}
+			 *	{"exp":"ds1_tag2*3",
+			 *		"cus":[],
+			 *		"val":1,
+			 *		"comp":compiled}	
+			 * ]}
+			 */
+			expStore:null,	//the observable store
 			refreshRate:0,	//update interval in MS
 			refreshFlag:0,	//update time flag
 			
 			intervalHandle:null,		// page interval handle
-			observeHandle:null,
+			observeHandle:null,			// observeHandle.cancel() will finish the observing
 			
 			/******************* methods *************************/
 			
@@ -32,6 +45,9 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				//resolve the page content
 				query(".binding-unit").forEach(function(node, index, nodelist) {
 					var cusContent = domAttr.get(node,"cus");	//{x:tag1+tag2,y:tag2-tag3,fill:tag3*3}
+					var nodeName = domAttr.get(node, "name");
+					var nodeID = domAttr.get(node, "id");
+					var nostNode = new NText(node, node.nodeName,nodeName,nodeID);
 					var cusJson = JSON.parse(cusContent); 
 					
 					for(var field in cusJson) {
@@ -41,7 +57,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 						
 						/********* add the cus ***********************/
 						
-						var cuObj = new ContUnit(node, field);		//create new control unit
+						var cuObj = new ContUnit(nostNode, field);		//create new control unit
 						var exprObj = thisPage.expStore.get(cuExp);
 						if (exprObj == null || exprObj == undefined) {
 							var expObj = new Expr(cuExp);
@@ -176,9 +192,6 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 							console.log(error);
 						}
 				);
-				
-				//resolve the data respond
-				//refresh the elements
 			},
 			
 			computeExpValue:function(expr, exprObj) {
@@ -199,36 +212,49 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 			start:function() {
 				console.log("start refreshing ");
 				var thisPage = this;
+				//start observing
+				this.startObserve();
+				//start refreshing
 				this.intervalHandle = setInterval(function() {
 					thisPage.refreshPage();
 				}, this.refreshRate);
 			},
+			
+			startObserve:function() {
+			    //get all the store elements
+			    var results = this.expStore.query({});
+
+			    // now listen for every change
+			    this.observeHandle = results.observe(function(expObj, removedFrom, insertedInto){
+			    	//update change
+			    	console.log("observing");
+			    	console.log(expObj);
+			    	var newVal = expObj.val;
+			    	array.forEach(expObj.cus, function(contunit) {
+			    		contunit.set(newVal);
+			    	});
+			    }, true);
+			},
+			
 			destroy:function() {
 				//stop the refresh
 				clearInterval(this.intervalHandle);
+				//stop the observe
+				this.observeHandle.cancel();
 			},
+			
 			toString:function() {
 				return JSON.stringify(this.tags);
 			},
+			
 			constructor:function(pName, pRate, pTenant) {
 				this.name = pName;
 				this.refreshRate = pRate;
 				this.tenantID = pTenant;
-				this.tags = {};	//{tag1:{value,[exp1,exp2]}, tags:{value, exp3}}
-				this.exps = [];	//[{exp:a+b,cus:[{node:n1,field:f},{node:n2,field:f2}],val:1},{},{}]
-				//declare.safeMixin(this,args);
+				this.tags = {};
+				this.exps = [];
 			    // create the initial Observable store
 			    this.expStore = new Observable(new Memory({data: this.exps, idProperty:"exp"}));
-			    
-			    // query the store
-			    var results = this.expStore.query({});
-
-			    // now listen for any changes
-			    this.observeHandle = results.observe(function(object, removedFrom, insertedInto){
-			    	//update change
-			    	console.log("observing");
-			    	console.log(object);
-			    }, true);
 			}
 		});
 		
