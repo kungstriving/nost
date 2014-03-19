@@ -1,6 +1,7 @@
 package com.everhope.nost.face;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -9,12 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
+import com.everhope.nost.face.utils.FaceCommonUtils;
 import com.everhope.nost.models.SessionPage;
 
 /**
- * Servlet implementation class RefreshPageServlet
+ * 页面刷新
  */
 @WebServlet("/refresh")
 public class RefreshPageServlet extends HttpServlet {
@@ -45,7 +48,10 @@ public class RefreshPageServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		logger.info("refreshing page @ " + request.getSession().getId());
+		
+		PrintWriter writer = response.getWriter();
 		
 		String pageName = request.getParameter(FaceConstants.REQ_K_PAGENAME);
 		String refreshFlag = request.getParameter(FaceConstants.REQ_K_REFFLAG);
@@ -53,11 +59,32 @@ public class RefreshPageServlet extends HttpServlet {
 		Map<String, SessionPage> pageMap = (Map<String,SessionPage>)
 				request.getSession().getAttribute(FaceConstants.SEN_K_PAGES);
 		SessionPage page = pageMap.get(pageName);
+		if (page == null) {
+			//服务器不包含该sessionpage
+			logger.warn(String.format("Session Page[%s] is null", pageName));
+			writer.write(FaceCommonUtils.getErrorMsg(FaceConstants.EC_SESSION_PAGE_NULL));
+			writer.flush();
+			return;
+		}
+		
 		page.setUpdateFlag(Integer.parseInt(refreshFlag));
 		
-		String refreshData = page.update();
+		String refreshData;
+		try {
+			refreshData = page.update();
+			writer.write(refreshData);
+			writer.flush();
+		} catch (Exception e) {
+			logger.error(ExceptionUtils.getStackTrace(e));
+			logger.error(e.getMessage());
+			
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			writer.write(FaceCommonUtils.getErrorMsg(FaceConstants.EC_REFRESH_ERROR));
+			writer.flush();
+		}
+		
 		logger.info("refresh page done");
-		response.getWriter().write(refreshData);
+		
 	}
 
 }

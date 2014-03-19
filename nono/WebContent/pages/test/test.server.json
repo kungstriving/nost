@@ -1,8 +1,0 @@
-{
-	"pageName":"test",
-	"tags":[
-		{"tagName":"db0#ds0#tag1"},
-		{"tagName":"db0#ds0#tag2"},
-		{"tagName":"db0#ds1#tag1"}
-	]
-}

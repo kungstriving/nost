@@ -2,8 +2,6 @@ package com.everhope.nost.models;
 
 import java.util.List;
 
-import com.everhope.nost.datastore.DataBroker;
-
 /**
  * Page definition
  * @author kongxiaoyang
@@ -40,7 +38,4 @@ public class Page {
 		this.tags = tags;
 	}
 	
-	public String refresh() {
-		return DataBroker.getInstance().refreshPage(this);
-	}
 }

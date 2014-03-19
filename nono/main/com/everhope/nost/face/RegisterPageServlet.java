@@ -1,6 +1,7 @@
 package com.everhope.nost.face;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.everhope.nost.face.utils.FaceCommonUtils;
 import com.everhope.nost.models.Page;
 import com.everhope.nost.models.SessionPage;
 import com.everhope.nost.models.Tag;
@@ -56,11 +58,15 @@ public class RegisterPageServlet extends HttpServlet {
 		
 		logger.info(String.format("register page @ %s", request.getSession().getId()));
 		
+		PrintWriter writer = response.getWriter();
+		
+		//获取画面名称
 		String pageName = request.getParameter(FaceConstants.REQ_K_PAGENAME);
+		//获取注册点json字符串
 		String tagsJson = request.getParameter(FaceConstants.REQ_K_TAGS);
 		
 		if (logger.isDebugEnabled()) {
-			logger.info("register page " + pageName);
+			logger.debug("register page " + pageName);
 		}
 		
 		//resolve the tags
@@ -72,6 +78,7 @@ public class RegisterPageServlet extends HttpServlet {
 		if (page == null) {
 			page = new Page();
 			page.setPageName(pageName);
+			container.put(pageName, page);		//加入context中
 		}
 		//更新当前画面所有tag点
 		page.setTags(regTags);
@@ -96,7 +103,8 @@ public class RegisterPageServlet extends HttpServlet {
 		}
 		
 		logger.info("register done");
-		response.getWriter().write("{\"status\":0,\"msg\":\"ok\"}");
+		writer.write(FaceCommonUtils.getInfoMsg(FaceConstants.IC_OK));
+		writer.flush();
 	}
 	
 	private List<Tag> resolveTags(String tagsJson) {
@@ -110,17 +118,16 @@ public class RegisterPageServlet extends HttpServlet {
 			if (!tagStr.contains(FaceConstants.FACE_SEPERATOR)) {
 				continue;
 			}
-			
+			//tasStr should like ds_tagname
 			String[] tagsPart = tagStr.split(FaceConstants.FACE_SEPERATOR);
-			if (tagsPart == null || tagsPart.length < 3) {
+			if (tagsPart == null || tagsPart.length < 2) {
 				logger.warn(String.format("Resolve Tag[%s] name rror", tagStr));
 				continue;
 			}
 			
 			Tag tmp = new Tag();
-			tmp.setUserPart(tagsPart[0]);
-			tmp.setDs(tagsPart[1]);	//设置数据源名称
-			tmp.setTagName(tagsPart[2]);	//设置tag名称
+			tmp.setDs(tagsPart[0]);	//设置数据源名称
+			tmp.setTagName(tagsPart[1]);	//设置tag名称
 			
 			pageTags.add(tmp);
 		}

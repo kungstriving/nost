@@ -1,4 +1,7 @@
 package com.everhope.nost.models;
+
+import com.everhope.nost.datastore.StoreConstants;
+
 /**
  * Tag definition
  * @author kongxiaoyang
@@ -11,11 +14,19 @@ public class Tag {
 	private String ds;
 	private String tagName;
 	
-	public String getUserPart() {
+	/**
+	 * 获取DB中的tag 点表示 DS_TagName
+	 * @return
+	 */
+	public String getDBTagName() {
+		return this.ds + StoreConstants.PDE_SEPERATOR + this.tagName;
+	}
+	
+	public String getTenant() {
 		return tenant;
 	}
-	public void setUserPart(String userPart) {
-		this.tenant = userPart;
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
 	}
 	public String getDs() {
 		return ds;
