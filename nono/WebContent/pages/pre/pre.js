@@ -15,3 +15,7 @@ require(['dojo/dom',
 		console.log("after init page = " + page.toString());
 		page.start();
 });
+
+function openPage() {
+	alert('opened');
+}

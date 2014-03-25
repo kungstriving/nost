@@ -47,6 +47,7 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 					var cusContent = domAttr.get(node,"cus");	//{x:tag1+tag2,y:tag2-tag3,fill:tag3*3}
 					var nodeName = domAttr.get(node, "name");
 					var nodeID = domAttr.get(node, "id");
+					//TODO according to the control type init the NostNode
 					var nostNode = new NText(node, node.nodeName,nodeName,nodeID);
 					var cusJson = JSON.parse(cusContent); 
 					
@@ -95,7 +96,8 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				var requestURL = common.getContextPath() + "nost";
 				var tagsReg = {"tags":[]};
 				for(var tag in this.tags) {
-					tagsReg.tags.push(this.tenantID + common.NAME_SEP + tag);
+					//tagsReg.tags.push(this.tenantID + common.NAME_SEP + tag);
+					tagsReg.tags.push(tag);
 				}
 				var tagsRegJson = JSON.stringify(tagsReg);
 				console.log("register page : " + tagsRegJson);
@@ -137,6 +139,8 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 						function(response) {
 							//got the new values then update the store
 							console.log("refresh response : " + JSON.stringify(response));		//{tags:{tag1:20,tag2:30,tag3:40},updateFlag:20}
+							//{tags:[{"dsName":"","tagName":"","value":"","quality":"","timestamp":"","name":""},
+							//{},{}],updateFlag:10}
 							var needExpsArr = {};		//{exp1:1,exp2:1,exp3:1}
 							var tagArr = response.tags;	//updated tags array
 							//set the refresh flag
@@ -144,16 +148,27 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 							var pageTags = thisPage.tags;		//cached tags object
 							//iterate all the changed tags
 							//console.log("length " + tagArr.length);
-							for(var k in tagArr) {
-								var tagValue = tagArr[k];
-								//set value first
-								pageTags[k].tagval = tagValue;
-								//get the refexprs
-								var refExpsArr = pageTags[k].refexps;
-								array.forEach(refExpsArr,function(item) {
-									needExpsArr[item] = 1;		//placetaken just show the existence
+							for(var i = 0; i < tagArr.length; i++) {
+								var tagValObj = tagArr[i];
+								var tagValue = tagValObj["value"];
+								var tagName = tagValObj["name"];
+								console.log("got new values name = " + tagName + " value = " + tagValue);
+								pageTags[tagName].tagval = tagValue;
+								var refExpsArr = pageTags[tagName].refexps;
+								array.forEach(refExpsArr, function(item) {
+									needExpsArr[item] = 1;		//placetoken just show the existence
 								});
 							}
+//							for(var k in tagArr) {
+//								var tagValue = tagArr[k];
+//								//set value first
+//								pageTags[k].tagval = tagValue;
+//								//get the refexprs
+//								var refExpsArr = pageTags[k].refexps;
+//								array.forEach(refExpsArr,function(item) {
+//									needExpsArr[item] = 1;		//placetaken just show the existence
+//								});
+//							}
 							
 							//already got all exps need to update
 							for(var l in needExpsArr) {

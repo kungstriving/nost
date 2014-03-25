@@ -1,6 +1,7 @@
 package com.everhope.nost.face;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -8,24 +9,26 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
+import com.everhope.nost.datastore.DataBroker;
+import com.everhope.nost.face.utils.I18nMessages;
 import com.everhope.nost.models.Page;
 
 /**
- * page load listener
- * This listener will load all the ready pages
+ * Nost System listener
  *
  */
 @WebListener
-public class PageLoadListener implements ServletContextListener {
+public class NostInitListener implements ServletContextListener {
 
-	private static final Logger logger = Logger.getLogger(PageLoadListener.class);
+	private static final Logger logger = Logger.getLogger(NostInitListener.class);
 	
     /**
      * Default constructor. 
      */
-    public PageLoadListener() {
+    public NostInitListener() {
     	logger.info("PageLoadListener()");
     }
 
@@ -34,16 +37,32 @@ public class PageLoadListener implements ServletContextListener {
      * @see ServletContextListener#contextInitialized(ServletContextEvent)
      */
     public void contextInitialized(ServletContextEvent ctxEve) {
-    	logger.info("start load pages");
+    	logger.info("NOST starting...");
     	
+    	//添加context画面容器
     	Map<String, Page> pageMap = new HashMap<String, Page>();
     	
     	ServletContext context = ctxEve.getServletContext();
     	context.setAttribute(FaceConstants.CTX_K_PAGES, pageMap);
     	
+		//添加数据库初始函数
+		DataBroker broker = DataBroker.getInstance();
+		//加载系统函数
+		try {
+			broker.loadScripts();
+		} catch (Exception e) {
+			logger.fatal(e.getMessage());
+			logger.fatal(ExceptionUtils.getStackTrace(e));
+			RuntimeException re = new RuntimeException(e);
+			throw re;
+		}
+		
+		//初始化国际化消息对象
+		I18nMessages.init(Locale.getDefault());
+		
     	//loadServerPages(pageMap, context);
     	
-    	logger.info("end load pages");
+    	logger.info("NOST started");
     }
 
 //	private void loadServerPages(Map<String, Page> pageMap,

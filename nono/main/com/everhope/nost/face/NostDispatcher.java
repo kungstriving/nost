@@ -3,6 +3,7 @@ package com.everhope.nost.face;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 @WebServlet("/nost")
 public class NostDispatcher extends HttpServlet {
-       
+	
     /**
 	 * 
 	 */
@@ -35,6 +36,7 @@ public class NostDispatcher extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -42,26 +44,31 @@ public class NostDispatcher extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		logger.info(String.format("dispatch request @ %s", request.getSession().getId()));
 		
 		String action = request.getParameter(FaceConstants.REQ_K_ACTIONS);
+		ServletContext sc = getServletContext();
 		RequestDispatcher dispatcher = null;
+		
 		if (action == null) {
+			logger.warn("Bad request! action = null");
 			return;
 		}
+		
 		switch (action) {
 		case FaceConstants.REQ_ACTION_REGISTER:
 			//dispatch to register service
-			dispatcher = request.getRequestDispatcher("/register");
+			dispatcher = sc.getRequestDispatcher("/register");
 			
 			break;
 		case FaceConstants.REQ_ACTION_REFRESH:
-			dispatcher = request.getRequestDispatcher("/refresh");
+			dispatcher = sc.getRequestDispatcher("/refresh");
 			break;
 		default:
-			dispatcher = request.getRequestDispatcher("/error.html");
+			dispatcher = sc.getRequestDispatcher("/error.html");
 			break;
 		}
 		

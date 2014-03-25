@@ -46,6 +46,7 @@ public class RegisterPageServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -54,6 +55,7 @@ public class RegisterPageServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		logger.info(String.format("register page @ %s", request.getSession().getId()));
@@ -120,7 +122,7 @@ public class RegisterPageServlet extends HttpServlet {
 			}
 			//tasStr should like ds_tagname
 			String[] tagsPart = tagStr.split(FaceConstants.FACE_SEPERATOR);
-			if (tagsPart == null || tagsPart.length < 2) {
+			if (tagsPart == null || tagsPart.length != 2) {
 				logger.warn(String.format("Resolve Tag[%s] name rror", tagStr));
 				continue;
 			}

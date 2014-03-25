@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import redis.clients.jedis.Jedis;
@@ -15,7 +15,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
-import com.everhope.nost.models.Page;
 import com.everhope.nost.models.SessionPage;
 import com.everhope.nost.models.Tag;
 
@@ -53,6 +52,7 @@ public class DataBroker {
 		auth = bundle.getString("db_auth");
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		String maxTotal = bundle.getString("db_actives");
+		poolConfig.setMaxTotal(NumberUtils.toInt(maxTotal));
 		jedisPool = new JedisPool(poolConfig, host, port);
 	}
 	

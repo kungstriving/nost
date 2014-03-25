@@ -79,7 +79,7 @@ public class SessionPage {
 				UpdatedTag uTag = new UpdatedTag();
 				uTag.setDsName(tag.getDs());
 				uTag.setTagName(tag.getTagName());
-				uTag.setName(tag.getDBTagName());
+				uTag.setName(tag.getFaceTagName());		//note:使用前端的点表示方法
 				
 				uTag.setQuality(props.get(StoreConstants.F_TAG_QUALITY));
 				uTag.setTimestamp(props.get(StoreConstants.F_TAG_TIMESTAMP));

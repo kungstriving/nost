@@ -1,6 +1,7 @@
 package com.everhope.nost.models;
 
 import com.everhope.nost.datastore.StoreConstants;
+import com.everhope.nost.face.FaceConstants;
 
 /**
  * Tag definition
@@ -15,11 +16,19 @@ public class Tag {
 	private String tagName;
 	
 	/**
-	 * 获取DB中的tag 点表示 DS_TagName
+	 * 获取DB中的tag 点表示 DS:TagName
 	 * @return
 	 */
 	public String getDBTagName() {
 		return this.ds + StoreConstants.PDE_SEPERATOR + this.tagName;
+	}
+	
+	/**
+	 * 获取前端需要的tag点表示 DS_TagName
+	 * @return
+	 */
+	public String getFaceTagName() {
+		return this.ds + FaceConstants.FACE_SEPERATOR + this.tagName;
 	}
 	
 	public String getTenant() {

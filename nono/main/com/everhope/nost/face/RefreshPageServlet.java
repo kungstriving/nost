@@ -39,6 +39,7 @@ public class RefreshPageServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -47,6 +48,7 @@ public class RefreshPageServlet extends HttpServlet {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		logger.info("refreshing page @ " + request.getSession().getId());
@@ -72,6 +74,9 @@ public class RefreshPageServlet extends HttpServlet {
 		String refreshData;
 		try {
 			refreshData = page.update();
+			if (logger.isDebugEnabled()) {
+				logger.debug("got updated tags : " + refreshData);
+			}
 			writer.write(refreshData);
 			writer.flush();
 		} catch (Exception e) {
