@@ -16,6 +16,6 @@ require(['dojo/dom',
 		page.start();
 });
 
-function openPage() {
+function rect1_click() {
 	alert('opened');
 }

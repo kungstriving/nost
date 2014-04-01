@@ -40,6 +40,11 @@ public class StoreConstants {
 	 */
 	public static final String PDE_SEPERATOR = ":";
 	
+	/**
+	 * tag标识
+	 */
+	public static final String PDE_TAG_KEY = "tag";
+	
 	/************************************************************
 	 * DB中的key定义
 	 *************************************************************/

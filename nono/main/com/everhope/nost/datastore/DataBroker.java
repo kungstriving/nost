@@ -66,6 +66,7 @@ public class DataBroker {
 			jedis = jedisPool.getResource();
 			jedis.auth(auth);
 			String shaFuncKey = jedis.scriptLoad(StoreConstants.SCRIPT_GETKEYS_LAGER_TIMEFLAG);
+			logger.info("LARGER_SCRIPT sha1:" + shaFuncKey);
 			funcTable.put(StoreConstants.SCRIPTKEY_GETKEYS_LAGER_TIMEFLAG, shaFuncKey);
 		} catch (Exception e) {
 			throw e;
@@ -171,7 +172,11 @@ public class DataBroker {
 			
 			List<String> args = new ArrayList<>();
 			args.add(timeFlag);
-			
+			if (!jedis.scriptExists(funcKey)) {
+				//if script no exist
+				//load it
+				jedis.scriptLoad(StoreConstants.SCRIPT_GETKEYS_LAGER_TIMEFLAG);
+			}
 			resultKeys = (List<String>)jedis.evalsha(funcKey, dbPointNames, args);
 		} catch (Exception e) {
 			throw e;

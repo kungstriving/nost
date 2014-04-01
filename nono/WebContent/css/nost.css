@@ -1,0 +1,37 @@
+body {
+	padding: 0;
+	margin: 0;
+	height:100%;
+	width:100%;
+}
+#sketchpad {
+	background-color: #CCCCCC;
+	font-family: arial, serif;
+}
+
+/* shapes */
+.shape {
+	fill:#0099CC;
+	stroke:#336699;
+	stroke-width:2px;
+}
+
+.shape:hover {
+	cursor:pointer;
+	opacity:0.9;	
+}
+
+.shape-path {
+	fill:none;
+}
+
+/* text */
+.text {
+	fill:#000000;
+	font-size:1.2em;
+	font-weight:600;
+}
+
+/************************************************/
+
+

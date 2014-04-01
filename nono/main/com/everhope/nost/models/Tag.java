@@ -20,7 +20,8 @@ public class Tag {
 	 * @return
 	 */
 	public String getDBTagName() {
-		return this.ds + StoreConstants.PDE_SEPERATOR + this.tagName;
+		return StoreConstants.PDE_TAG_KEY + StoreConstants.PDE_SEPERATOR
+				+ this.ds + StoreConstants.PDE_SEPERATOR + this.tagName;
 	}
 	
 	/**
