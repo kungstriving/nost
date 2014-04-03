@@ -339,12 +339,43 @@
 		</defs>
 		<path id="170" d="M480,300 l80,0 l0,-10 l15,15 l-15,15 l0,-10 l-80,0" 
 			style="stroke:none;fill:#333366;mask:url(#arrowMask);">
-			<animate id="anim1" attributeName="opacity" attributeType="CSS"
-					from="1" to="0.3" begin="0s" dur="2s" fill="freeze" repeatCount="indefinite" />
-			<animate id="anim2" attributeName="opacity" attributeType="CSS"
-					from="0.3" to="1" begin="2" dur="2s" fill="freeze" />
+			<animate id="anim0" attributeName="opacity" attributeType="CSS"
+					from="1" to="0" begin="0s" dur="2s" fill="freeze" repeatCount="indefinite"/>
+			<animateMotion id="moveForeHead" 
+				path="M0,5 l80,5"
+				begin="0s" dur="2s" repeatCount="indefinite"/>
 		</path>
-				
+		
+		<!-- filters -->
+		<defs>
+			<filter id="filter" x="0" y="0" filterUnits="objectBoundingBox" width="130%" height="130%">
+				<feOffset in="SourceAlpha" dx="3" dy="3" result="offset" />
+				<feGaussianBlur in="offset" stdDeviation="3" result="blur2" />
+				<feMerge>
+					<feMergeNode in="blur2" />
+					<feMergeNode in="SourceGraphic" />
+				</feMerge>
+			</filter>
+			<filter id="disLight" x="0" y="0" width="120%" height="120%" filterUnits="objectBoundingBox">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+				<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+				<feSpecularLighting in="blur" result="specLight" 
+					surfaceScale="5" specularExponent="10" lighting-color="#bbbbbb">
+					 <fePointLight x="-5000" y="-10000" z="20000"/>
+				</feSpecularLighting>
+				<feComposite in="specLight" in2="SourceAlpha" operator="in" result="specOut"/>
+      			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" 
+                   k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+      			<feMerge>
+        			<feMergeNode in="offsetBlur"/>
+        			<feMergeNode in="litPaint"/>
+      			</feMerge>
+			</filter>
+		</defs>
+		
+		<rect x="480" y="360" width="50" height="50" rx="5" ry="5"
+			style="stroke:none;fill:#999966;filter:url(#disLight);" />
+			
 		<!-- nested svg -->
 <!-- 		<svg x="10" y="10"> -->
 <!-- 			<rect x="10" y="10" height="100" width="100" style="stroke:#ff0000; fill: #0000ff"/> -->

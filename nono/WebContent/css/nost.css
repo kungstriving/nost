@@ -6,7 +6,13 @@ body {
 }
 #sketchpad {
 	background-color: #CCCCCC;
-	font-family: arial, serif;
+	font-family: yayuan, arial, serif;
+}
+
+/* font */
+@font-face {
+	font-family: yayuan;
+	src:url('../fonts/yayuan.otf');
 }
 
 /* shapes */
