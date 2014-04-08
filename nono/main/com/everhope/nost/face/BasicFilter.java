@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 /**
  * Servlet Filter implementation class BasicFilter
  */
-//@WebFilter("/nost/*")
+@WebFilter("/nost/*")
 public class BasicFilter implements Filter {
 
 	private static final Logger logger = Logger.getLogger(BasicFilter.class);
@@ -38,10 +38,8 @@ public class BasicFilter implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		logger.info("start basic filter");
-		
+		response.setCharacterEncoding("UTF-8");		
 		chain.doFilter(request, response);
-		logger.info("end basic filter");
 	}
 
 	/**

@@ -5,7 +5,7 @@ define(["dojo/_base/declare"],
 		return declare(null, {
 			
 			/****************** fields *****************************/
-			rawNode:null,		//the raw HTML document node
+			rawNode:null,		//the raw HTML/SVG document node
 			nType:"",		//node type eg:Rect/Circle/Point
 			name:"",		//name for the node
 			id:"",			//id for the node

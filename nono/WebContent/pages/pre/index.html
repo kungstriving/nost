@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>NONO</title>
 <link rel="stylesheet" href="../../css/nost.css" /> 
-<link rel="stylesheet" href="../../css/page.css" />
+<link rel="stylesheet" href="pre.css" />
 <script type="text/javascript" src="../../dojo/dojo.js" data-dojo-config="async:true,has:{'dojo-firebug':true}"></script>
 <script type="text/javascript" src="../../js/parser.js"></script>
 <script type="text/javascript" src="pre.js"></script>
@@ -18,17 +18,17 @@
 		
 		<text x="150" y="125" text-anchor="middle" id="3" fill="#666666" font-size="3em"
 			cus='{"x":"rand_tag1+rand_tag2","y":"rand_tag2*3","fill":"rand_tag3+rand_tag1","text":"rand_tag1"}' 
-			class="binding-unit">TEST
+			class="binding-unit" ntype="basichmi_text">TEST
 		</text>
 
 		<text x="300" y="125" font-size="60" text-anchor="middle" fill="green" id="4" 
 			cus='{"x":"rand_tag2"}'
-			class="binding-unit">TEST
+			class="binding-unit" ntype="basichmi_text">TEST
 		</text>
 
 		<text x="450" y="125" font-size="60" text-anchor="middle" fill="black" id="5"
 			cus='{"y":"rand_tag3"}'
-			class="binding-unit" >TEST
+			class="binding-unit" ntype="basichmi_text">TEST
 		</text>
 		
 		<rect x="300" y="800" width="50" height="50" fill="brown" />
@@ -36,5 +36,5 @@
 		<image xlink:href="loading.gif" x="0" y="0" height="200px" width="200px"/>
 	</svg>
 </body>
-<page name="pre" refreshRate = "3000" id="pagemetas"/>
+<page name="pre" refreshRate = "10000" id="pagemetas"/>
 </html>

@@ -25,7 +25,7 @@ public class FaceCommonUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		
 		Gson gson = new Gson();
-		InfoMessage im = new InfoMessage(I18nMessages.getErrMsg(infoCode), infoCode, sdf.format(new Date()));
+		InfoMessage im = new InfoMessage(I18nMessages.getText(infoCode), infoCode, sdf.format(new Date()));
 		return gson.toJson(im);
 	}
 	

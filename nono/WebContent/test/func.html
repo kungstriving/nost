@@ -6,20 +6,26 @@
 </head>
 <body>
 <script type="text/javascript">
-	var foo = function() {
-		return {
-			funa:function(x) {
-				alert('funa' + x);
-			},
-			funb:function(x) {
-				alert('funb' + x);
-			}
-		};
+	var funcjson = '{"a":"b()"}';
+	
+	function a() {
+		alert('a');
 	}
 	
-	var test = new foo();
-	test["funa"]('kxy');
+	function b() {
+		alert('b');
+	}
 	
+	var fo = JSON.parse(funcjson);
+	var s = fo.a;
+	//alert(s);
+	eval(s);
+	//fo["on"]();
+	//funcjson[a]();
+	///funcjson.a();
+	//var s = "a";
+	//var f = (function)s;
+	//f();
 </script>
 </body>
 </html>

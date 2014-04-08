@@ -83,7 +83,7 @@ public class RefreshPageServlet extends HttpServlet {
 			logger.error(ExceptionUtils.getStackTrace(e));
 			logger.error(e.getMessage());
 			
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			writer.write(FaceCommonUtils.getErrorMsg(FaceConstants.EC_REFRESH_ERROR));
 			writer.flush();
 		}

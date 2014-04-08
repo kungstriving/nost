@@ -1,3 +1,5 @@
+/* globals */
+
 body {
 	padding: 0;
 	margin: 0;
@@ -6,7 +8,19 @@ body {
 }
 #sketchpad {
 	background-color: #CCCCCC;
-	font-family: yayuan, arial, serif;
+	font-family: arial, serif;
+	width:100%;
+	height:100%;
+	preserveAspectRatio:"xMinyMin meet";
+}
+
+.normalbox {
+	viewBox:"0 0 1265 674";
+}
+
+.iphone5box {
+	viewBox:"0 0 640 1136";
+	
 }
 
 /* font */

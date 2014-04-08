@@ -2,10 +2,11 @@
 
 define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memory","dojo/store/Observable",
         "dojo/query","dojo/dom-attr",
-        "nost/common","nost/Tag", "nost/ContUnit", "nost/Expr", "nost/NostNode", "nost/NText"],
+        "nost/common","nost/Tag", "nost/ContUnit", "nost/Expr", "nost/NostNode", "nost/NText", 
+        "nost/NostNodeFactory"],
 	function(declare, request, array, Memory, Observable, 
 			query, domAttr,
-			common, Tag, ContUnit, Expr, NostNode, NText) {
+			common, Tag, ContUnit, Expr, NostNode, NText, NostNodeFactory) {
 		var clsPage = declare(null, {
 			
 			/****************** fields *****************************/
@@ -45,10 +46,13 @@ define(["dojo/_base/declare","dojo/request","dojo/_base/array","dojo/store/Memor
 				//resolve the page content
 				query(".binding-unit").forEach(function(node, index, nodelist) {
 					var cusContent = domAttr.get(node,"cus");	//{x:tag1+tag2,y:tag2-tag3,fill:tag3*3}
-					var nodeName = domAttr.get(node, "name");
-					var nodeID = domAttr.get(node, "id");
-					//TODO according to the control type init the NostNode
-					var nostNode = new NText(node, node.nodeName,nodeName,nodeID);
+//					var nodeName = domAttr.get(node, "name");
+//					var nodeID = domAttr.get(node, "id");
+					//get the ntype property from the node
+					var nodeType = domAttr.get(node,"ntype");
+					//create the NostNode from the factory
+					var nostNode = NostNodeFactory.getNostNodeByType(nodeType, node);
+//					var nostNode = new NText(node, node.nodeName,nodeName,nodeID);
 					var cusJson = JSON.parse(cusContent); 
 					
 					for(var field in cusJson) {

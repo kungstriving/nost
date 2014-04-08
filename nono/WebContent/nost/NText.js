@@ -1,4 +1,4 @@
-//define the NostText module
+//define the basichim-NostText module
 
 define(["dojo/_base/declare","dojo/dom-attr","dojo/html",
         "nost/NostNode"],

@@ -80,7 +80,7 @@ public class FaceConstants {
 	/**
 	 * 操作正常 1000
 	 */
-	public static final String IC_OK = "10000";
+	public static final String IC_OK = "1000";
 	
 	/*****************************************************************
 	 * others
