@@ -29,6 +29,23 @@ public class FaceCommonUtils {
 		return gson.toJson(im);
 	}
 	
+	/**
+	 * 根据infocode和消息内容构造字符串
+	 * 
+	 * @param infoCode
+	 * @param msgContent
+	 * @return
+	 */
+	public static String getInfoMsg(String infoCode, String msgContent) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		
+		Gson gson = new Gson();
+		InfoMessage im = new InfoMessage(msgContent, infoCode, sdf.format(new Date()));
+		return gson.toJson(im);
+	
+	}
+	
 	static class InfoMessage {
 
 		private String msg;

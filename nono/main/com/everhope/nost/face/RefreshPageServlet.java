@@ -60,6 +60,12 @@ public class RefreshPageServlet extends HttpServlet {
 		
 		Map<String, SessionPage> pageMap = (Map<String,SessionPage>)
 				request.getSession().getAttribute(FaceConstants.SEN_K_PAGES);
+		if (pageMap == null) {
+			logger.warn(String.format("Session Page Container is null"));
+			writer.write(FaceCommonUtils.getErrorMsg(FaceConstants.EC_SE_PAGE_CONT_NULL));
+			writer.flush();
+			return;
+		}
 		SessionPage page = pageMap.get(pageName);
 		if (page == null) {
 			//服务器不包含该sessionpage

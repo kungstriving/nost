@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -12,11 +13,15 @@ import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
+import com.everhope.nost.models.AuthItem;
 import com.everhope.nost.models.SessionPage;
 import com.everhope.nost.models.Tag;
+import com.everhope.nost.models.User;
+import com.google.gson.Gson;
 
 /**
  * Data broker for db
@@ -75,6 +80,137 @@ public class DataBroker {
 				jedisPool.returnResource(jedis);
 			}
 		}
+	}
+	
+	public LoginResponseMessage login(final User user) throws Exception {
+		final LoginResponseMessage returnMessage = new LoginResponseMessage();
+		final Gson gson = new Gson();
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.auth(auth);
+			
+//			jedis.publish(StoreConstants.C_LOGIN, user.getLoginJson());
+			
+			jedis.subscribe(new JedisPubSub() {
+				
+				AtomicInteger respID = new AtomicInteger();
+				
+				
+				@Override
+				public void onUnsubscribe(String channel, int subedChannels) {
+				}
+				
+				@Override
+				public void onSubscribe(String channel, int subedChannels) {
+					UserLoginMessage ulm = new UserLoginMessage();
+					int messageID = IDGenerator.getID();
+					ulm.mid = messageID + "";
+					//set the response mid should be
+					messageID++;
+					
+					respID.set(messageID);
+					
+					ulm.username = user.getUsername();
+					ulm.secPwd = user.getSecPwd();
+					String msg = gson.toJson(ulm, UserLoginMessage.class);
+					Jedis jedis = null;
+					try {
+						jedis = jedisPool.getResource();
+						jedis.auth(auth);
+						jedis.publish(StoreConstants.C_LOGIN, msg);
+					} catch (Exception e) {
+						throw e;
+					} finally {
+						if (jedis != null) {
+							jedisPool.returnResource(jedis);
+						}
+					}
+					//TODO 启动消息接收超时计时
+					
+				}
+				
+				@Override
+				public void onPUnsubscribe(String arg0, int arg1) {
+					
+				}
+				
+				@Override
+				public void onPSubscribe(String arg0, int arg1) {
+					
+				}
+				
+				@Override
+				public void onPMessage(String arg0, String arg1, String arg2) {
+					
+				}
+				
+				@Override
+				public void onMessage(String channel, String message) {
+					//判断是否是同一条消息回应
+					LoginResponseMessage rm = gson.fromJson(message, LoginResponseMessage.class);
+					if (Integer.parseInt(rm.mid) == respID.get()) {
+						//如果消息id对应上，设置返回消息内容
+//						returnMessage.append(message);
+						returnMessage.code = rm.code;
+						returnMessage.mid = rm.mid;
+						//取消订阅
+						this.unsubscribe();
+					}
+				}
+			}, StoreConstants.C_LOGIN_ACK);
+			
+			return returnMessage;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedisPool.returnResource(jedis);
+			}
+		}
+	}
+	
+	/**
+	 * 获取授权类型
+	 * 
+	 * @param username
+	 * @param authItemIDs
+	 * @return
+	 */
+	public List<String> getAuthType(String username, List<AuthItem> authItemIDs) {
+		List<String> authTypes = new ArrayList<>();
+		Jedis jedis = null;
+		
+		try {
+			jedis = jedisPool.getResource();
+			jedis.auth(auth);
+			
+			String userKey = "user:" + username;
+			
+			String groupName = jedis.hget(userKey, "groupName");
+						
+			//遍历所有数据点获取值
+			Pipeline pipe = jedis.pipelined();
+			List<Response<String>> respTypes = new ArrayList<>();
+			for(AuthItem item : authItemIDs) {
+				String authRelKey = "authrel:" + groupName;
+				Response<String> authType = pipe.hget(authRelKey, item.getId());
+				respTypes.add(authType);
+			}
+			
+			pipe.sync();
+			
+			for (Response<String> response : respTypes) {
+				authTypes.add(response.get());
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedisPool.returnResource(jedis);
+			}
+		}		
+		return authTypes;
 	}
 	
 	/**
@@ -198,4 +334,15 @@ public class DataBroker {
 		}
 		logger.info("close connection");
 	}
+
+	class UserLoginMessage {
+		String mid = "";
+		String username = "";
+		String secPwd = "";
+	}
+	
+//	class ResponseMessage {
+//		String mid = "";
+//		String content = "";
+//	}
 }

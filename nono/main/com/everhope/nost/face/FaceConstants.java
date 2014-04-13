@@ -21,6 +21,11 @@ public class FaceConstants {
 	 */
 	public static final String SEN_K_PAGES = "sepages";
 	
+	/**
+	 * session中的user对象key定义 user
+	 */
+	public static final String SEN_K_USER = "user";
+	
 	/************************************************************
 	 * request url keys definition
 	 ************************************************************/
@@ -45,9 +50,25 @@ public class FaceConstants {
 	 */
 	public static final String REQ_K_REFFLAG = "refreshFlag";
 	
+	/**
+	 * 登录用户名
+	 */
+	public static final String REQ_K_USERNAME = "username";
+	
+	/**
+	 * 登录用户密码
+	 */
+	public static final String REQ_K_PWD_SECRET = "secretPwd";
+	
+	
 	/***************************************************************
-	 * request key enum definition
+	 * request key [action] enum definition
 	 *****************************************************************/
+	
+	/**
+	 * request action type-loadPage
+	 */
+	public static final String REQ_ACTION_LOADPAGE = "loadPage";
 	
 	/**
 	 * request action type-register
@@ -58,6 +79,16 @@ public class FaceConstants {
 	 * request action type-refresh
 	 */
 	public static final String REQ_ACTION_REFRESH = "refresh";
+	
+	/**
+	 * 用户登录
+	 */
+	public static final String REQ_ACTION_LOGINPAGE = "pageLogin";
+	
+	/**
+	 * 控制命令
+	 */
+	public static final String REQ_ACTION_CONTROL = "control";
 	
 	/***************************************************************
 	 * 错误消息key定义
@@ -73,6 +104,26 @@ public class FaceConstants {
 	 */
 	public static final String EC_REFRESH_ERROR = "10001";
 	
+	/**
+	 * 用户登录密码错误 10002
+	 */
+	public static final String EC_LOGIN_WRONG_PWD = "10002";
+	
+	/**
+	 * 用户登录用户名不存在
+	 */
+	public static final String EC_LOGIN_NO_USER = "10003";
+	
+	/**
+	 * 会话画面容器为空
+	 */
+	public static final String EC_SE_PAGE_CONT_NULL = "10004";
+	
+	/**
+	 * 服务器内部错误
+	 */
+	public static final String EC_SERVER_ERROR = "10005";
+	
 	/****************************************************************
 	 * 消息key定义
 	 *****************************************************************/
@@ -80,7 +131,7 @@ public class FaceConstants {
 	/**
 	 * 操作正常 1000
 	 */
-	public static final String IC_OK = "1000";
+	public static final String IC_OK = "0";
 	
 	/*****************************************************************
 	 * others

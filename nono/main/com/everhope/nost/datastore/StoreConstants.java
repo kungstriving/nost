@@ -49,6 +49,16 @@ public class StoreConstants {
 	 * DB中的key定义
 	 *************************************************************/
 	
+	/**
+	 * 登录通道
+	 */
+	public static final String C_LOGIN = "login";
+	
+	/**
+	 * 登录响应通道
+	 */
+	public static final String C_LOGIN_ACK = "login:ack";
+	
 	/**********************************************************
 	 * DB中的hash field定义
 	 *********************************************************/

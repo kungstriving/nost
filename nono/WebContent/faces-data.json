@@ -8,7 +8,11 @@ request=http://host:port/webappname/bpd?action=register&pagename=page1&tags=$PAR
 $PARAMTAGS$={
 	tags:[ds1_tag1,ds2_tag1,ds1_tag2,ds2_tag2]
 }
-response=ok
+response={
+	code:1000,
+	msg:操作正常,
+	datetime:2014-04-04 08:00:00.000
+}
 
 4)refresh
 request=http://host:port/webappname/nost?action=refresh&pagename=page1&updateflag=10
@@ -25,3 +29,16 @@ response={
 5)Debug
 request=http://host:port/webappname/Debug?at=pages
 response= [context pages]
+
+6)PageLogin
+request=http://host:port/webappname/nost?action=pageLogin&$postdata$
+postdata={
+	lessee=A,
+	username=user1,
+	secretPwd=encoded(pwd)
+}
+response={
+	code:1000,
+	msg:{initPage:page1},
+	datetime:2014-04-04 08:00:00.000
+}
