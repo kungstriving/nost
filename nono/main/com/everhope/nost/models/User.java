@@ -81,7 +81,7 @@ public class User {
 	 * @return
 	 * @throws IOException 
 	 */
-	public String accessToPage(String absPagePath) throws IOException {
+	public String loadPage(String absPagePath) throws IOException {
 		String fileContent  = "";
 		File htmlFile = new File(absPagePath + "/index.html");
 		try {
@@ -121,6 +121,11 @@ public class User {
 		}
 		
 		return fileContent;
+	}
+	
+	public void sendCommand(UserControlCmd controlCmd) throws Exception{
+		DataBroker broker = DataBroker.getInstance();
+		broker.sendCommond(this, controlCmd);
 	}
 
 	public String getUsername() {

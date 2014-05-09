@@ -1,16 +1,27 @@
-//$(document).ready(function() {
-//	$("#loginpanel").animate({"margin-top":"120px","opacity":"1"},2000);
-//});
 
-require(["dojo/dom","dojo/_base/fx","dojo/fx/easing","dojo/on","dojo/request","dojo/dom-form",
+require(["dojo/dom","dojo/_base/fx","dojo/fx/easing","dojo/on","dojo/request","dojo/request/notify","dojo/dom-form",
          "nost/common",
          "../../js/jquery-2.0.3.js","../../js/jquery.mobile-1.4.2.js","dojo/domReady!"],
-	function(dom, baseFx, easingType, on, request, domForm,
+	function(dom, baseFx, easingType, on, request, reqNotify,domForm,
 			common) {
 	var loginPanel = dom.byId("loginpanel"),
 		loginButton = dom.byId("loginbtn");
 	
+	//register the user login click
 	on(loginButton,"click",login);
+	//register the ajax request events
+	reqNotify("start", function() {
+		$.mobile.loading( "show", {
+			text: "加载中...",
+			textVisible: true,
+			theme: "a",
+			html: ""
+			});
+	});
+	
+	reqNotify("done", function(data) {
+		$.mobile.loading("hide");
+	});
 	
 	baseFx.animateProperty({
 		node:loginPanel,
@@ -47,12 +58,6 @@ require(["dojo/dom","dojo/_base/fx","dojo/fx/easing","dojo/on","dojo/request","d
 					var pageName = msgObj.initPage;
 					
 					window.location.href = requestURL + "?action=loadPage&pageName=" + pageName;
-//					request.get(requestURL + "?action=loadPage&pageName=" + pageName);
-//					request(requestURL + "?action=loadPage&pageName=" + pageName).then(
-//							function(text) {
-//								window.location.href = "/nono/pages/tom/";
-////								console.log(text);
-//					});
 				},
 				function(error) {
 					//alert the error message

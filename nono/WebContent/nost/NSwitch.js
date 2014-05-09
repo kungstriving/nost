@@ -1,10 +1,10 @@
 //define the basichmi-switch module
 
 define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
-        "nost/NostNode","nost/MatchTable",
-        "../../js/snap.svg.js"],
+        "nost/NostNode","nost/MatchTable","nost/NSystem",
+        "./js/snap.svg.js"],
 	function(declare, domAttr, query,on,
-			NostNode,MatchTable) {
+			NostNode,MatchTable,NSystem) {
 		return declare(NostNode, {
 			
 			/****************** fields *****************************/
@@ -36,11 +36,12 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 						//调用用户定义的关闭开关函数
 						var funcOffHandle = thisSwitch.eventMap["switchoff"];
 						if (funcOffHandle == null || funcOffHandle == "undefined") {
-							Console.log("user switchoff event handler not defined");
+							console.log("user switchoff event handler not defined");
 						} else {
 							//invoke user function
 //							funcOffHandle();
-							eval(funcOffHandle);
+							var tempFuncName = funcOffHandle + "(NSystem)"; 
+							eval(tempFuncName);
 							//close the switch , if the user's function got error, then you will not 
 							//get here
 							thisSwitch.closeSwitch();
@@ -50,11 +51,12 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 						//调用用户定义的打开开关函数
 						var funcOnHandle = thisSwitch.eventMap["switchon"];
 						if (funcOnHandle == null || funcOnHandle == "undefined") {
-							Console.log("user switchon event handler not defined");
+							console.log("user switchon event handler not defined");
 						} else {
 							//invoke user function
 //							funcOnHandle();
-							eval(funcOnHandle);
+							var tempFuncName = funcOnHandle + "(NSystem)"; 
+							eval(tempFuncName);
 							thisSwitch.openSwitch();
 						}
 					}

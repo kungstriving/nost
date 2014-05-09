@@ -66,6 +66,9 @@ public class NostDispatcher extends HttpServlet {
 			//dispatch to register service
 			dispatcher = sc.getRequestDispatcher("/register");
 			break;
+		case FaceConstants.REQ_ACTION_LOADLOGIN:
+			dispatcher = sc.getRequestDispatcher("/pages/login/");
+			break;
 		case FaceConstants.REQ_ACTION_LOGINPAGE:
 			dispatcher = sc.getRequestDispatcher("/pageLogin");
 			break;

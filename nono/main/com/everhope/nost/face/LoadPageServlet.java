@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.everhope.nost.models.User;
@@ -53,11 +54,19 @@ public class LoadPageServlet extends HttpServlet {
 		String pageName = request.getParameter(FaceConstants.REQ_K_PAGENAME);
 		String pageAbsPath = request.getServletContext().getRealPath("/pages/" + pageName);
 		//首先解析是否有访问该画面的权限
-		user.accessToPage(pageAbsPath);
-		response.sendRedirect(request.getServletContext().getContextPath() + "/pages/" + pageName + "/");
-		String s = "<html><head><link rel='stylesheet' href='./pages/login/login.css' /></head><body><h1>TTTTT</h1></body></html>";
-		response.getWriter().write(s);
-		response.getWriter().flush();
+		String fileContent = user.loadPage(pageAbsPath);
+		
+		if (StringUtils.isEmpty(fileContent)) {
+			logger.warn(String.format("user[%s] has no access right to page[%s]", user.getUsername(), pageName));
+			response.sendRedirect(request.getServletContext().getContextPath() + "/401.html");
+			return;
+		} else {
+			if (logger.isInfoEnabled()) {
+				logger.info(String.format("user[%s] request to load page[%s]", user.getUsername(), pageName));
+			}
+			response.getWriter().write(fileContent);
+			response.getWriter().flush();
+		}
 		return;
 	}
 

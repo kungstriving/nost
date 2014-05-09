@@ -35,7 +35,7 @@ public class UserTest {
 	public void testLoadPage() {
 		testUser = new User("root", "root");
 		try {
-			String res = testUser.accessToPage("F:\\git\\Everhope\\nono\\WebContent\\pages\\tom");
+			String res = testUser.loadPage("F:\\git\\Everhope\\nono\\WebContent\\pages\\tom");
 			System.out.println(res);
 		} catch (IOException e) {
 			e.printStackTrace();

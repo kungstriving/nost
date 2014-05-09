@@ -38,7 +38,17 @@ postdata={
 	secretPwd=encoded(pwd)
 }
 response={
-	code:1000,
+	code:0,
 	msg:{initPage:page1},
 	datetime:2014-04-04 08:00:00.000
+}
+
+7)control
+request=http://host:port/webappname/nost?action=control&cmds=$postdata$
+postdata={name:ds1_tag1,field:value,value:100}
+
+response={
+	code:0,
+	msg:操作正常,
+	datetime:2014-04-14 08:00:00.000
 }

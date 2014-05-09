@@ -60,6 +60,11 @@ public class FaceConstants {
 	 */
 	public static final String REQ_K_PWD_SECRET = "secretPwd";
 	
+	/**
+	 * 用户控制命令
+	 */
+	public static final String REQ_K_CONTROL = "cmds";
+	
 	
 	/***************************************************************
 	 * request key [action] enum definition
@@ -89,6 +94,8 @@ public class FaceConstants {
 	 * 控制命令
 	 */
 	public static final String REQ_ACTION_CONTROL = "control";
+	
+	public static final String REQ_ACTION_LOADLOGIN = "loadLogin";
 	
 	/***************************************************************
 	 * 错误消息key定义

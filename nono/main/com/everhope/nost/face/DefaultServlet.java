@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class DefaultServlet
  */
-@WebServlet({ "*.html", "*.js", "*.css" })
+//@WebServlet({ "*.js", "*.css" })
 public class DefaultServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -25,7 +25,8 @@ public class DefaultServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 	}
 
 	/**

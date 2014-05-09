@@ -1,8 +1,8 @@
 //define the NostNodeFactory module
 
-define(["nost/common","nost/NSwitch","nost/NText",
+define(["nost/common","nost/NSwitch","nost/NText","nost/NPump",
         "dojo/dom-attr"],
-	function(common,NSwitch,NText,domAttr) {
+	function(common,NSwitch,NText,NPump,domAttr) {
 		return {
 			
 			/****************** fields *****************************/
@@ -17,6 +17,13 @@ define(["nost/common","nost/NSwitch","nost/NText",
 				},
 				"text":function(pNode,pNType,pNodeName,pNodeID) {
 					return new NText(pNode, pNType, pNodeName,pNodeID);
+				},
+				"pump":function(pNode,pNType,pNodeName,pNodeID) {
+					var pumpObj = new NPump(pNode,pNType,pNodeName,pNodeID);
+					pumpObj.handleEvent();
+					pumpObj.handleMatchTable();
+					pumpObj.handleAnimateObjs();
+					return pumpObj;
 				}
 			},
 			/******************* methods *************************/

@@ -21,6 +21,7 @@ import com.everhope.nost.models.AuthItem;
 import com.everhope.nost.models.SessionPage;
 import com.everhope.nost.models.Tag;
 import com.everhope.nost.models.User;
+import com.everhope.nost.models.UserControlCmd;
 import com.google.gson.Gson;
 
 /**
@@ -90,8 +91,6 @@ public class DataBroker {
 			jedis = jedisPool.getResource();
 			jedis.auth(auth);
 			
-//			jedis.publish(StoreConstants.C_LOGIN, user.getLoginJson());
-			
 			jedis.subscribe(new JedisPubSub() {
 				
 				AtomicInteger respID = new AtomicInteger();
@@ -107,7 +106,7 @@ public class DataBroker {
 					int messageID = IDGenerator.getID();
 					ulm.mid = messageID + "";
 					//set the response mid should be
-					messageID++;
+					//messageID++;
 					
 					respID.set(messageID);
 					
@@ -256,6 +255,34 @@ public class DataBroker {
 			logger.debug("get points value end");
 		}
 		return mapTmp;
+	}
+	
+	/**
+	 * 下发控制命令 返回错误码
+	 * @return
+	 */
+	public String sendCommond(User user, UserControlCmd cmd) throws Exception{
+		String result = "";
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.auth(auth);
+			
+			String controlChannel = cmd.getControlDS() + StoreConstants.PDE_SEPERATOR + "control";
+			Gson gson = new Gson();
+			cmd.setMid(IDGenerator.getID() + "");
+			String cmdJson = gson.toJson(cmd, UserControlCmd.class);
+			//只是发布 不关心结果
+			jedis.publish(controlChannel, cmdJson);
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedisPool.returnResource(jedis);
+			}
+		}
+		return result;
 	}
 	
 	/**

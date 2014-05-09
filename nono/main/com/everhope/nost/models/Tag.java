@@ -16,7 +16,7 @@ public class Tag {
 	private String tagName;
 	
 	/**
-	 * 获取DB中的tag 点表示 DS:TagName
+	 * 获取DB中的tag 点表示 tag:DS:TagName
 	 * @return
 	 */
 	public String getDBTagName() {
