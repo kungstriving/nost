@@ -14,6 +14,7 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 			switchBlock:null,
 			/******************* methods *************************/
 
+			/////////////////////元素配置方法 ////////////////////////
 			handleEvent:function() {
 				this.eventMap = {};
 				var eventConfigJson = domAttr.get(this.rawNode,"ec");
@@ -63,6 +64,17 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 				});
 			},
 			
+			//////////////////// 元素属性 /////////////////////////////
+
+			x:function(newVal) {
+				domAttr.set(this.rawNode, "x", newVal);
+				console.log('set x new ' + newVal);
+			},
+			
+			y:function(newVal) {
+				domAttr.set(this.rawNode, "y", newVal);
+				console.log('set y new ' + newVal);
+			},
 			watch_value:function(newVal) {
 				//结合mt(match table)判断如何设定当前控件的表现形态
 				var status = this.matchTable.getStatus("watch_value",newVal);
@@ -72,6 +84,8 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 					this.closeSwitch();
 				}
 			},
+			
+			///////////////////// 元素动画 ////////////////////////////
 			openSwitch:function() {
 				//打开开关
 				if (this.switchon == true) {
@@ -101,16 +115,6 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 					domAttr.set(thisSwitch.switchBlock,{transform:"translate(" + val + ")"});
 				},1000);
 				this.switchon = false;
-			},
-			
-			x:function(newVal) {
-				domAttr.set(this.rawNode, "x", newVal);
-				console.log('set x new ' + newVal);
-			},
-			
-			y:function(newVal) {
-				domAttr.set(this.rawNode, "y", newVal);
-				console.log('set y new ' + newVal);
 			},
 
 			set:function(field, newValue) {

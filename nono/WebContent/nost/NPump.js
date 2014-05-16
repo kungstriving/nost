@@ -8,7 +8,7 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 		return declare(NostNode, {
 			
 			/****************** fields *****************************/
-			pumpon:false,		//默认开关是关的
+			pumpon:true,		//默认开关是关的
 			eventMap:null,		//事件map
 			matchTable:null,	//匹配表
 			pumpLeaf:null,		//叶片控制单元
@@ -47,51 +47,32 @@ define(["dojo/_base/declare","dojo/dom-attr","dojo/query","dojo/on",
 			//转速属性
 			pumpSpeed:function(newVal) {
 				//转速值应该是每分钟多少转，换算为相应的tranform值后设置动画
+				//线性变量通过函数进行控制
 				if(this.pumpon == true) {
-					//当前开关打开状态
-					var snPumpLeaf = Snap(this.pumpLeaf);
-					snPumpLeaf.animate({transform:'r180,50,45'},2000,mina.bounce);
+					//当前开关打开状态 换算转速
+					var durSec = (60/newVal);
+					
+					var domPumpLeafAnim = query("#" + this.id + "_a52995c3-59e1-4b04-b8f6-cd573c43a7c7", this.rawNode)[0];
+					domPumpLeafAnim.setAttribute("dur",durSec);
+					domPumpLeafAnim.endElement();
+					domPumpLeafAnim.beginElement();
+					
+//					var snPumpLeaf = Snap(this.pumpLeaf);
+//					function doAnimate(pAngle) {
+//						snPumpLeaf.animate({transform:"r" + pAngle + ",50,45"},1000,mina.linear,doAnimate(pAngle));
+//					};
+//					doAnimate(angle);
 					console.log('got new pump speed ' + newVal);
 				}
 			},
 			//开关属性
 			pumpSwitch:function(newVal) {
-				//离散变量
+				//离散变量 由matchtable控制
 				console.log('got new pump switch ' + newVal);
-				this.pumpon = !this.pumpon;
+				//this.pumpon = !this.pumpon;
 			},
 			
 			///////////////////////////元素动画////////////////////////////////
-			openSwitch:function() {
-				//打开开关
-				if (this.switchon == true) {
-					return;
-				}
-//				var sanpNode = Snap(this.rawNode);
-				if (this.switchBlock == null || this.switchBlock == undefined) {
-					this.switchBlock = query("#" + this.id + "_a6e58d51-9592-4c03-bc31-b747713f092f", this.rawNode)[0];
-				}
-				var thisSwitch = this;
-				Snap.animate(0,45,function(val){
-					domAttr.set(thisSwitch.switchBlock,{transform:"translate(" + val + ")"});
-				},1000);
-				
-				this.switchon = true;
-			},
-			closeSwitch:function() {
-				//关闭开关
-				if (this.switchon == false) {
-					return;
-				}
-				if (this.switchBlock == null || this.switchBlock == undefined) {
-					this.switchBlock = query("#" + this.id + "_a6e58d51-9592-4c03-bc31-b747713f092f", this.rawNode)[0];
-				}
-				var thisSwitch = this;
-				Snap.animate(45,0,function(val){
-					domAttr.set(thisSwitch.switchBlock,{transform:"translate(" + val + ")"});
-				},1000);
-				this.switchon = false;
-			},
 			
 			//////////////////////////////////// 设置属性值方法///////////////
 			set:function(field, newValue) {

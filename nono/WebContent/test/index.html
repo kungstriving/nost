@@ -5,8 +5,8 @@
 <title>start</title>
 <script type="text/javascript" src="../dojo/dojo.js" data-dojo-config="async:true,has:{'dojo-firebug':true}"></script>
 <script type="text/javascript">
-	require(["dojo/on","dojo/dom","dojo/store/Memory", "dojo/store/Observable","dojo/domReady!"],
-			function(on,dom,Memory,Observable) {
+	require(["dojo/on","dojo/dom","dojo/store/Memory", "dojo/store/Observable","dojo/_base/array","dojo/domReady!"],
+			function(on,dom,Memory,Observable,array) {
 		var someData = [
 		                {name:"a",value:1},
 		                {name:"b",value:2},
@@ -33,6 +33,12 @@
 	    	data.value = Math.floor(Math.random() * 10 + 1);
 	    	store.put(data);
 	    });
+	    
+	    //var mapObj = {"a":"one","b":"two","c":"three"};
+	    var mapObj = ["a","b"];
+	    array.forEach(mapObj, function(item,i) {
+	    	alert(item);
+	    })
 	});
 </script>
 </head>

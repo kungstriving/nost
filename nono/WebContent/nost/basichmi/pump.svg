@@ -17,9 +17,10 @@
     		<ellipse cx="50" cy="45" rx="5" ry="30"
 				style="fill:none;stroke:black;stroke-width:2px;"
 				transform="rotate(135,50,45)" />
-<!--     		<animateTransform attributeName="transform" type="rotate" -->
-<!-- 				from="0,50,45" to="180,50,45" begin="0s" dur="2s" fill="freeze" -->
-<!-- 				repeatCount="indefinite" /> -->
+			<animateTransform id="a52995c3-59e1-4b04-b8f6-cd573c43a7c7" 
+				attributeName="transform" type="rotate"
+				from="0,50,45" to="360,50,45" begin="indefinite" dur="2s" fill="freeze"
+				repeatCount="indefinite" />
     	</g>
     </g>
 </svg>

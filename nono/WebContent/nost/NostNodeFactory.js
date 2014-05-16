@@ -1,12 +1,13 @@
 //define the NostNodeFactory module
 
-define(["nost/common","nost/NSwitch","nost/NText","nost/NPump",
+define(["nost/common","nost/NSwitch","nost/NText","nost/NPump","nost/NTank",
         "dojo/dom-attr"],
-	function(common,NSwitch,NText,NPump,domAttr) {
+	function(common,NSwitch,NText,NPump,NTank,domAttr) {
 		return {
 			
 			/****************** fields *****************************/
 			basichmi:{
+				//针对不同类型的元素在这里进行初始化配置
 				"switch":function(pNode,pNType,pNodeName,pNodeID) {
 					var switchObj = new NSwitch(pNode, pNType, pNodeName,pNodeID);
 					//config the switch
@@ -16,7 +17,10 @@ define(["nost/common","nost/NSwitch","nost/NText","nost/NPump",
 					return switchObj;
 				},
 				"text":function(pNode,pNType,pNodeName,pNodeID) {
-					return new NText(pNode, pNType, pNodeName,pNodeID);
+					var textObj = new NText(pNode,pNType,pNodeName,pNodeID);
+					//config the text
+					textObj.handleAnims();
+					return textObj;
 				},
 				"pump":function(pNode,pNType,pNodeName,pNodeID) {
 					var pumpObj = new NPump(pNode,pNType,pNodeName,pNodeID);
@@ -24,6 +28,14 @@ define(["nost/common","nost/NSwitch","nost/NText","nost/NPump",
 					pumpObj.handleMatchTable();
 					pumpObj.handleAnimateObjs();
 					return pumpObj;
+				},
+				"tank":function(pNode,pNType,pNodeName,pNodeID) {
+					var tankObj = new NTank(pNode,pNType,pNodeName,pNodeID);
+					tankObj.handleEvent();
+					tankObj.handleMatchTable();
+					tankObj.handleAnimateObjs();
+					tankObj.handleSetProps();
+					return tankObj;
 				}
 			},
 			/******************* methods *************************/

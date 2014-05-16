@@ -41,6 +41,10 @@ define(
 					]
 					 */
 					this.triggerMap = {};
+					if (pMatchTableJson == undefined || pMatchTableJson == "") {
+						return;
+					}
+					
 					var matchObj = JSON.parse(pMatchTableJson);
 					var length = matchObj.length;
 					for(var i = 0; i < length; i++) {

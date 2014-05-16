@@ -14,7 +14,9 @@ define(
 					console.log("get context path " + returnPath);
 					return returnPath;
 				},
-				NAME_SEP:"_"
+				
+				NAME_SEP:"_",
+				SVG_XMLNS:"http://www.w3.org/2000/svg"
 			};
 		}
 );
